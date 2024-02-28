@@ -418,6 +418,12 @@ resource "aws_cloudformation_stack_set_instance" "lacework_stackset_instances" {
     region_concurrency_type = var.stackset_region_concurrency_type
   }
 
+  timeouts {
+    create = "1h"
+    update = "1h"
+    delete = "1h"
+  }
+
   region         = data.aws_region.current.name
   stack_set_name = aws_cloudformation_stack_set.lacework_stackset.name
   depends_on = [ // depending on all this ensures the stackinstances can be torn down properly
