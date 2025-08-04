@@ -17,7 +17,9 @@ locals {
   template_url  = "https://${var.cf_s3_bucket}.s3.us-west-2.amazonaws.com/${var.cf_s3_prefix}/templates/lacework-aws-cfg-member.template.yml"
   version_file   = "${abspath(path.module)}/VERSION"
   module_name    = "terraform-aws-org-configuration"
-  module_version = fileexists(local.version_file) ? file(local.version_file) : ""  
+  module_version = fileexists(local.version_file) ? file(local.version_file) : ""
+  // For dev accounts such as `qan.qan.corp`, external_id expects `qan` rather than `qan.qan.corp`
+  lacework_account_for_external_id = strcontains(var.lacework_account, ".") ? split(".", var.lacework_account)[0] : var.lacework_account
 }
 
 data "aws_caller_identity" "current" {}
@@ -30,7 +32,7 @@ data "aws_region" "current" {}
 resource "aws_s3_bucket" "lacework_org_lambda" {
   bucket_prefix = "lacework-org-lambda-"
   force_destroy = true
-  tags = var.tags 
+  tags = var.tags
 }
 
 resource "aws_s3_bucket_versioning" "lacework_org_lambda" {
@@ -348,7 +350,7 @@ resource "aws_cloudformation_stack" "lacework_stack" {
   tags         = var.tags
 
   parameters = {
-    LaceworkAccount    = var.lacework_account
+    LaceworkAccount    = local.lacework_account_for_external_id
     MainAccountSNS     = aws_sns_topic.lacework_sns_topic.arn
     ResourceNamePrefix = var.cf_resource_prefix
     SecretArn          = aws_secretsmanager_secret.lacework_api_credentials.id
@@ -382,7 +384,7 @@ resource "aws_cloudformation_stack_set" "lacework_stackset" {
   }
 
   parameters = {
-    LaceworkAccount    = var.lacework_account
+    LaceworkAccount    = local.lacework_account_for_external_id
     MainAccountSNS     = aws_sns_topic.lacework_sns_topic.arn
     ResourceNamePrefix = var.cf_resource_prefix
     SecretArn          = aws_secretsmanager_secret.lacework_api_credentials.id
