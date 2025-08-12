@@ -12,7 +12,7 @@ locals {
   # python_version = "python3.11"
 
   kms_key_arn   = length(var.kms_key_arn) > 0 ? var.kms_key_arn : aws_kms_key.lacework_kms_key[0].arn
-  lambda_zip    = "LaceworkIntegrationSetup1.1.3.zip"
+  lambda_zip    = "LaceworkIntegrationSetup1.1.4.zip"
   s3_lambda_key = "${var.cf_s3_prefix}/lambda/${local.lambda_zip}"
   template_url  = "https://${var.cf_s3_bucket}.s3.us-west-2.amazonaws.com/${var.cf_s3_prefix}/templates/lacework-aws-cfg-member.template.yml"
   version_file   = "${abspath(path.module)}/VERSION"
