@@ -1,6 +1,6 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v1.1.4`.
+Another day, another release. These are the release notes for the version `v1.1.5`.
 
 ## Other Changes
-* chore: fix LW_ACCOUNT for devtest accounts (Pengyuan Zhao)([1020c7d](https://github.com/lacework/terraform-aws-org-configuration/commit/1020c7d2c4331842a5d00b57cfbf96f861065e09))
-* ci: version bump to v1.1.4-dev (Lacework)([6c2830c](https://github.com/lacework/terraform-aws-org-configuration/commit/6c2830c0a299589a7adbf441ad8f348d2f49c8be))
+* chore: update lambda_zip to 1.1.4 (Pengyuan Zhao)([509ab73](https://github.com/lacework/terraform-aws-org-configuration/commit/509ab73c7fa0161c5eba60bf259aeab7de3615fc))
+* ci: version bump to v1.1.5-dev (Lacework)([c51d0ec](https://github.com/lacework/terraform-aws-org-configuration/commit/c51d0ecb088a7eec0dd6f35ca70dcb89253b083a))
