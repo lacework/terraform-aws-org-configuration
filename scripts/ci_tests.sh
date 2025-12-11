@@ -26,7 +26,7 @@ integration_tests() {
     ( cd $tcase || exit 1
       terraform init
       terraform validate
-      terraform plan
+      terraform plan -var="lacework_access_key_id=accesskey" -var="lacework_secret_key=_secretkey"
     ) || exit 1
   done
 }
