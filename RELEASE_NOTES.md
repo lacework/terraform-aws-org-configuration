@@ -1,6 +1,7 @@
 # Release Notes
-Another day, another release. These are the release notes for the version `v1.1.5`.
+Another day, another release. These are the release notes for the version `v1.1.6`.
 
 ## Other Changes
-* chore: update lambda_zip to 1.1.4 (Pengyuan Zhao)([509ab73](https://github.com/lacework/terraform-aws-org-configuration/commit/509ab73c7fa0161c5eba60bf259aeab7de3615fc))
-* ci: version bump to v1.1.5-dev (Lacework)([c51d0ec](https://github.com/lacework/terraform-aws-org-configuration/commit/c51d0ecb088a7eec0dd6f35ca70dcb89253b083a))
+* chore: add --i-still-use-this arg in verify_release (#39) (Pengyuan Zhao)([878d70a](https://github.com/lacework/terraform-aws-org-configuration/commit/878d70ab56882ea1ba090b1406f1ca5866428600))
+* chore(CAD_1809): update example for Lacework API key id and secret (#37) (Pengyuan Zhao)([795bee6](https://github.com/lacework/terraform-aws-org-configuration/commit/795bee63b5eb1e0494471912a90f9a5c985b5f1d))
+* ci: version bump to v1.1.6-dev (Lacework)([c9f1217](https://github.com/lacework/terraform-aws-org-configuration/commit/c9f12173b97833056b6b66ba49528622d04df20e))
