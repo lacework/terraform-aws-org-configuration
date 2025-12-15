@@ -9,17 +9,30 @@ provider "aws" {
   region = "us-west-2"
 }
 
+variable "lacework_access_key_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "lacework_secret_key" {
+  type      = string
+  sensitive = true
+}
+
 module "aws_org_configuration" {
   source  = "lacework/org-configuration/aws"
   version = "~> 0.1"
 
   lacework_account       = "account"
   lacework_subaccount    = "sub-account"
-  lacework_access_key_id = "accesskey"
-  lacework_secret_key    = "_secretkey"
   organization_id        = "o-organizationid"
   organization_unit      = "org-unit"
   cf_resource_prefix     = "prefix"
+
+  // Do not hardcode senstive values here.
+  // Use command-line, environment variables or git-ignored secrets.tfvars file
+  lacework_access_key_id = var.lacework_access_key_id
+  lacework_secret_key    = var.lacework_secret_key
 }
 ```
 
