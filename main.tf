@@ -100,11 +100,13 @@ resource "aws_iam_role" "lacework_copy_zip_files_role" {
     policy = data.aws_iam_policy_document.lacework_copy_zip_files_role.json
   }
 
-  managed_policy_arns = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  ]
   name = "lacework_copy_zip_files_role"
   path = "/"
+}
+
+resource "aws_iam_role_policy_attachments_exclusive" "lacework_copy_zip_files_role" {
+  role_name   = aws_iam_role.lacework_copy_zip_files_role.name
+  policy_arns = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
 }
 
 data "aws_iam_policy_document" "lacework_copy_zip_files_assume_role" {
@@ -193,11 +195,13 @@ resource "aws_iam_role" "lacework_setup_function_role" {
     policy = data.aws_iam_policy_document.lacework_setup_function_role.json
   }
 
-  managed_policy_arns = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  ]
   name = "lacework_setup_function_role"
   path = "/"
+}
+
+resource "aws_iam_role_policy_attachments_exclusive" "lacework_setup_function_role" {
+  role_name   = aws_iam_role.lacework_setup_function_role.name
+  policy_arns = ["arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
 }
 
 data "aws_partition" "current" {}
