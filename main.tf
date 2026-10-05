@@ -24,8 +24,6 @@ locals {
 
 data "aws_caller_identity" "current" {}
 
-data "aws_region" "current" {}
-
 #tfsec:ignore:aws-s3-enable-bucket-encryption
 #tfsec:ignore:aws-s3-enable-bucket-logging
 #tfsec:ignore:aws-s3-encryption-customer-key
@@ -82,6 +80,11 @@ resource "aws_lambda_function" "lacework_copy_zip_files" {
       object     = "/lambda/${local.lambda_zip}"
     }
   }
+
+  depends_on = [
+    aws_iam_role_policy.lacework_copy_zip_files_policy,
+    aws_iam_role_policy_attachment.lacework_copy_zip_files_role_basic_execution
+  ]
 }
 
 data "archive_file" "lambda_zip_file" {
@@ -95,16 +98,19 @@ resource "aws_iam_role" "lacework_copy_zip_files_role" {
   assume_role_policy = data.aws_iam_policy_document.lacework_copy_zip_files_assume_role.json
   tags               = var.tags
 
-  inline_policy {
-    name   = "zip-role"
-    policy = data.aws_iam_policy_document.lacework_copy_zip_files_role.json
-  }
-
-  managed_policy_arns = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  ]
   name = "lacework_copy_zip_files_role"
   path = "/"
+}
+
+resource "aws_iam_role_policy" "lacework_copy_zip_files_policy" {
+  name   = "zip-role"
+  role   = aws_iam_role.lacework_copy_zip_files_role.id
+  policy = data.aws_iam_policy_document.lacework_copy_zip_files_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "lacework_copy_zip_files_role_basic_execution" {
+  role       = aws_iam_role.lacework_copy_zip_files_role.name
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 data "aws_iam_policy_document" "lacework_copy_zip_files_assume_role" {
@@ -180,7 +186,9 @@ resource "aws_lambda_function" "lacework_setup_function" {
   depends_on = [
     aws_lambda_invocation.lacework_copy_zip_files,
     aws_sns_topic.lacework_sns_topic,
-    aws_secretsmanager_secret.lacework_api_credentials
+    aws_secretsmanager_secret.lacework_api_credentials,
+    aws_iam_role_policy.lacework_setup_function_policy,
+    aws_iam_role_policy_attachment.lacework_setup_function_role_basic_execution
   ]
 }
 
@@ -188,16 +196,19 @@ resource "aws_iam_role" "lacework_setup_function_role" {
   assume_role_policy = data.aws_iam_policy_document.lacework_setup_function_assume_role.json
   tags               = var.tags
 
-  inline_policy {
-    name   = "lacework_setup_function_policy"
-    policy = data.aws_iam_policy_document.lacework_setup_function_role.json
-  }
-
-  managed_policy_arns = [
-    "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  ]
   name = "lacework_setup_function_role"
   path = "/"
+}
+
+resource "aws_iam_role_policy" "lacework_setup_function_policy" {
+  name   = "lacework_setup_function_policy"
+  role   = aws_iam_role.lacework_setup_function_role.id
+  policy = data.aws_iam_policy_document.lacework_setup_function_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "lacework_setup_function_role_basic_execution" {
+  role       = aws_iam_role.lacework_setup_function_role.name
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 data "aws_partition" "current" {}
@@ -420,7 +431,6 @@ resource "aws_cloudformation_stack_set_instance" "lacework_stackset_instances" {
     region_concurrency_type = var.stackset_region_concurrency_type
   }
 
-  region         = data.aws_region.current.name
   stack_set_name = aws_cloudformation_stack_set.lacework_stackset.name
   depends_on = [ // depending on all this ensures the stackinstances can be torn down properly
     aws_s3_bucket.lacework_org_lambda,
